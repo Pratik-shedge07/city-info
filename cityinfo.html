@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Information App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #eef2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 22px;
+            color: #444;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #dfe6e9;
+            border-radius: 5px;
+            display: none;
+        }
+        .result h3 {
+            margin-bottom: 10px;
+        }
+        .loader {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>City Information</h1>
+        <div class="form-group">
+            <input type="text" id="cityName" placeholder="Enter city name">
+        </div>
+        <button onclick="getCityInfo()">Get City Info</button>
+        <div class="loader" id="loader">Loading...</div>
+        <div class="result" id="result">
+            <h3>City Information</h3>
+            <p><strong>City:</strong> <span id="city"></span></p>
+            <p><strong>Country:</strong> <span id="country"></span></p>
+            <p><strong>Population:</strong> <span id="population"></span></p>
+            <p><strong>Timezone:</strong> <span id="timezone"></span></p>
+        </div>
+    </div>
+    <script>
+        async function getCityInfo() {
+            const city = document.getElementById("cityName").value.trim();
+            const resultContainer = document.getElementById("result");
+            const loader = document.getElementById("loader");
+            resultContainer.style.display = 'none';
+            loader.style.display = 'block';
+            
+            if (city === "") {
+                alert("Please enter a city name.");
+                loader.style.display = 'none';
+                return;
+            }
+            try {
+                const response = await fetch(`https://geocode.xyz/${city}?json=1`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert("City information not available.");
+                } else {
+                    document.getElementById("city").textContent = city;
+                    document.getElementById("country").textContent = data.country || "N/A";
+                    document.getElementById("population").textContent = data.population || "N/A";
+                    document.getElementById("timezone").textContent = data.timezone || "N/A";
+                    resultContainer.style.display = 'block';
+                }
+            } catch (error) {
+                alert("Error fetching city information.");
+            }
+            loader.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
